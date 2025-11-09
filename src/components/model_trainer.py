@@ -12,6 +12,7 @@ from sklearn.ensemble import(
         GradientBoostingRegressor,
         AdaBoostRegressor
 )
+from sklearn.model_selection import GridSearchCV
 from sklearn.linear_model import LinearRegression
 from xgboost import XGBRegressor
 from sklearn.tree import DecisionTreeRegressor
@@ -43,8 +44,48 @@ class ModelTrainer:
                 "AdaBoost Regressor": AdaBoostRegressor(),
                 "K-Neighbors Regressor": KNeighborsRegressor()
             }
+            ## Hyperparameter tuning
+            
 
-            model_report: dict = evaluate_models(X_train, y_train, X_test, y_test, models)
+            param_distributions = {
+                "Random Forest": {
+                    "n_estimators": [100, 200],
+                    "max_depth": [None, 10, 20],
+                    "min_samples_split": [2, 5, 10]
+                },
+                "Decision Tree": {
+                    "max_depth": [None, 10, 20],
+                    "min_samples_split": [2, 5, 10]
+                },
+                "Gradient Boosting": {
+                    "n_estimators": [100, 200],
+                    "learning_rate": [0.01, 0.1, 1],
+                    "max_depth": [3, 5, 7]
+                },
+                "Linear Regression": {
+                    "fit_intercept": [True, False]
+                },
+                "XGBRegressor": {
+                    "n_estimators": [100, 200],
+                    "learning_rate": [0.01, 0.1, 1],
+                    "max_depth": [3, 5, 7]
+                },
+                "CatBoosting Regressor": {
+                    "iterations": [100, 200],
+                    "learning_rate": [0.01, 0.1, 1],
+                    "depth": [3, 5, 7]
+                },
+                "AdaBoost Regressor": {
+                    "n_estimators": [50, 100],
+                    "learning_rate": [0.01, 0.1, 1]
+                },
+                "K-Neighbors Regressor": {
+                    "n_neighbors": [3, 5, 7],
+                    "weights": ["uniform", "distance"]
+                }
+            }
+
+            model_report: dict = evaluate_models(X_train, y_train, X_test, y_test, models, param_distributions)
 
             for i in range(len(models)):
                 model = list(models.values())[i]
