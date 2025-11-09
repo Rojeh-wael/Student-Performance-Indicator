@@ -23,7 +23,7 @@ class DataTransformation:
         try:
             logging.info("Data Transformation initiated")
 
-            numerical_columns = ['math score', 'reading score', 'writing score']
+            numerical_columns = []
             categorical_columns = ['gender', 'race/ethnicity', 'parental level of education', 'lunch', 'test preparation course']
 
             numerical_pipeline = Pipeline(steps=[
@@ -33,7 +33,7 @@ class DataTransformation:
 
             categorical_pipeline = Pipeline(steps=[
                 ('imputer', SimpleImputer(strategy='most_frequent')),
-                ('onehot', OneHotEncoder(handle_unknown='ignore')),
+                ('onehot', OneHotEncoder(handle_unknown='ignore', sparse_output=False)),
                 ('scaler', StandardScaler())
             ])
 
@@ -64,11 +64,21 @@ class DataTransformation:
             y_test = test_df[['math score', 'reading score', 'writing score']]
 
             logging.info("Data transformation completed")
+            # fit the preprocessor on training features and transform both train and test
+            input_feature_train_arr = preprocessor.fit_transform(X_train)
+            input_feature_test_arr = preprocessor.transform(X_test)
+
+            # concatenate features and targets so downstream expects arrays with target as last column
+            train_array = np.c_[input_feature_train_arr, y_train.values]
+            test_array = np.c_[input_feature_test_arr, y_test.values]
+
+            # save the fitted preprocessor
             save_object(
                 file_path=self.data_transformation_config.preprocessor_obj_file_path,
                 obj=preprocessor
             )
-            return X_train, y_train, X_test, y_test
+
+            return train_array, test_array
         except Exception as e:
             logging.info("Exception occurred in data transformation")
             raise CustomException(e, sys)
