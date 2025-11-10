@@ -57,11 +57,11 @@ class DataTransformation:
             train_df = pd.read_csv(train_path)
             test_df = pd.read_csv(test_path)
 
-            X_train = train_df.drop(columns=['math score', 'reading score', 'writing score'])
-            y_train = train_df[['math score', 'reading score', 'writing score']]
+            X_train = train_df.drop(columns=['math score'])
+            y_train = train_df[['math score']]
 
-            X_test = test_df.drop(columns=['math score', 'reading score', 'writing score'])
-            y_test = test_df[['math score', 'reading score', 'writing score']]
+            X_test = test_df.drop(columns=['math score'])
+            y_test = test_df[['math score']]
 
             logging.info("Data transformation completed")
             # fit the preprocessor on training features and transform both train and test

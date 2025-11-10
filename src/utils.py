@@ -44,3 +44,22 @@ def evaluate_models(X_train, y_train, X_test, y_test, models, param_distribution
     except Exception as e:
         logging.info("Exception occurred while evaluating models")
         raise CustomException(e, sys)
+def load_object(file_path):
+    try:
+        # Handle numpy._core compatibility issue for older numpy versions
+        import sys
+        import numpy as np
+        
+        # If numpy._core doesn't exist, create it as an alias to numpy.core
+        if 'numpy._core' not in sys.modules:
+            try:
+                import numpy.core
+                sys.modules['numpy._core'] = numpy.core
+            except ImportError:
+                pass
+        
+        with open(file_path, 'rb') as file_obj:
+            return pickle.load(file_obj)
+    except Exception as e:
+        logging.info("Exception occurred while loading object")
+        raise CustomException(e, sys)

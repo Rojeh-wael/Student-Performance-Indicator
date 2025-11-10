@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict Performance - Student Indicator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 30px 20px;
+        }
+
+        .container-prediction {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            max-width: 700px;
+            margin: 0 auto;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 35px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 0.95rem;
+            opacity: 0.95;
+        }
+
+        .form-container {
+            padding: 40px 30px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-section-title i {
+            color: #667eea;
+            font-size: 1.2rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group select option:disabled {
+            color: #999;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 16px 40px;
+            font-size: 1.05rem;
+            border-radius: 50px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .btn-back {
+            background: #f0f0f0;
+            border: none;
+            padding: 12px 30px;
+            font-size: 0.95rem;
+            border-radius: 50px;
+            color: #333;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: inline-block;
+            text-decoration: none;
+            margin-bottom: 30px;
+        }
+
+        .btn-back:hover {
+            background: #e0e0e0;
+            transform: translateX(-3px);
+        }
+
+        .result-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 40px 30px;
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+        }
+
+        .result-label {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            margin-bottom: 15px;
+        }
+
+        .result-score {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .result-description {
+            font-size: 1rem;
+            opacity: 0.95;
+            margin-bottom: 25px;
+        }
+
+        .score-interpretation {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 0.95rem;
+        }
+
+        .btn-new-prediction {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+
+        .btn-new-prediction:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            color: #667eea;
+        }
+
+        .help-text {
+            font-size: 0.85rem;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .form-container {
+                padding: 25px 15px;
+            }
+
+            .result-score {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-prediction">
+        <a href="{{ url_for('index') }}" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Back Home
+        </a>
+
+        <div class="header">
+            <h1><i class="fas fa-chart-bar"></i> Prediction Form</h1>
+            <p>Enter student details to predict math performance</p>
+        </div>
+
+        <div class="form-container">
+            {% if results %}
+                <div class="result-container">
+                    <div class="result-label">Predicted Math Score</div>
+                    <div class="result-score">{{ "%.1f"|format(results) }}</div>
+                    <div class="result-description">out of 100</div>
+                    
+                    <div class="score-interpretation">
+                        {% if results >= 80 %}
+                            <i class="fas fa-star"></i> <strong>Excellent Performance</strong> - The student is expected to perform exceptionally well!
+                        {% elif results >= 70 %}
+                            <i class="fas fa-thumbs-up"></i> <strong>Good Performance</strong> - The student is expected to perform well.
+                        {% elif results >= 60 %}
+                            <i class="fas fa-check"></i> <strong>Average Performance</strong> - The student is expected to perform at an average level.
+                        {% else %}
+                            <i class="fas fa-exclamation-triangle"></i> <strong>Needs Support</strong> - Additional support may be beneficial.
+                        {% endif %}
+                    </div>
+
+                    <a href="{{ url_for('predict') }}" class="btn-new-prediction">
+                        <i class="fas fa-plus"></i> Make Another Prediction
+                    </a>
+                </div>
+            {% else %}
+                <form action="{{ url_for('predict')}}" method="post" class="prediction-form">
+                    <!-- Demographic Section -->
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <i class="fas fa-user"></i> Demographics
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="gender">Gender <span style="color: #e74c3c;">*</span></label>
+                            <select class="form-control" id="gender" name="gender" required>
+                                <option value="" disabled selected>Select your gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                            <div class="help-text"><i class="fas fa-info-circle"></i> Student's gender</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="race_ethnicity">Race or Ethnicity <span style="color: #e74c3c;">*</span></label>
+                            <select class="form-control" id="race_ethnicity" name="race_ethnicity" required>
+                                <option value="" disabled selected>Select ethnicity</option>
+                                <option value="group A">Group A</option>
+                                <option value="group B">Group B</option>
+                                <option value="group C">Group C</option>
+                                <option value="group D">Group D</option>
+                                <option value="group E">Group E</option>
+                            </select>
+                            <div class="help-text"><i class="fas fa-info-circle"></i> Student's ethnicity group</div>
+                        </div>
+                    </div>
+
+                    <!-- Education Section -->
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <i class="fas fa-book"></i> Education Background
+                        </div>
+
+                        <div class="form-group">
+                            <label for="parental_level_of_education">Parental Level of Education <span style="color: #e74c3c;">*</span></label>
+                            <select class="form-control" id="parental_level_of_education" name="parental_level_of_education" required>
+                                <option value="" disabled selected>Select parent's education level</option>
+                                <option value="some high school">Some High School</option>
+                                <option value="high school">High School</option>
+                                <option value="some college">Some College</option>
+                                <option value="associate's degree">Associate's Degree</option>
+                                <option value="bachelor's degree">Bachelor's Degree</option>
+                                <option value="master's degree">Master's Degree</option>
+                            </select>
+                            <div class="help-text"><i class="fas fa-info-circle"></i> Highest education level of parents</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lunch">Lunch Program <span style="color: #e74c3c;">*</span></label>
+                            <select class="form-control" id="lunch" name="lunch" required>
+                                <option value="" disabled selected>Select lunch type</option>
+                                <option value="standard">Standard</option>
+                                <option value="free/reduced">Free/Reduced</option>
+                            </select>
+                            <div class="help-text"><i class="fas fa-info-circle"></i> Type of lunch program participated</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="test_preparation_course">Test Preparation Course <span style="color: #e74c3c;">*</span></label>
+                            <select class="form-control" id="test_preparation_course" name="test_preparation_course" required>
+                                <option value="" disabled selected>Select test preparation status</option>
+                                <option value="none">None</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                            <div class="help-text"><i class="fas fa-info-circle"></i> Test preparation course completion status</div>
+                        </div>
+                    </div>
+
+                    <!-- Test Scores Section -->
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <i class="fas fa-pencil"></i> Test Scores
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="reading_score">Reading Score <span style="color: #e74c3c;">*</span></label>
+                                <input class="form-control" type="number" id="reading_score" name="reading_score" 
+                                    placeholder="0-100" min="0" max="100" required/>
+                                <div class="help-text"><i class="fas fa-info-circle"></i> Reading test score (0-100)</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="writing_score">Writing Score <span style="color: #e74c3c;">*</span></label>
+                                <input class="form-control" type="number" id="writing_score" name="writing_score" 
+                                    placeholder="0-100" min="0" max="100" required/>
+                                <div class="help-text"><i class="fas fa-info-circle"></i> Writing test score (0-100)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-magic"></i> Predict Math Score
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Form validation and feedback
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('.prediction-form');
+            if (form) {
+                const inputs = form.querySelectorAll('input, select');
+                inputs.forEach(input => {
+                    input.addEventListener('change', function() {
+                        if (this.value) {
+                            this.style.borderColor = '#667eea';
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
